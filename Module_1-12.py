@@ -12,7 +12,6 @@ n = 31000
 k = 63
 p = k / n
 f = comb(n, k) * (p ** k) * (1 - p) ** (n - k)
-print(f"Probability of {k} ocurrences in {n} cases is {f}")
 
 # Loop case
 N = k + 50
@@ -24,4 +23,7 @@ for i in range(0, N):
 # Plotting
 plt.plot(pmf)
 plt.grid()
+plt.title(f"Probability of {k} ocurrences in {n} cases is {f:.4}")
+plt.xlabel("Number of patients")
+plt.ylabel("Probability of ocurrence")
 plt.show()
