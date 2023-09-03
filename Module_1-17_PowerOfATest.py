@@ -31,11 +31,13 @@ for i in range(0, N):
 
 # Numerical Integration
 alpha_index_x = 45  # T value of significance level
-# area_under_curve_simpson = simpson(pmf_poisson_H0[:alpha_index_x])  # default dx=1
-# print(f"The area under the curve using simpson is {area_under_curve_simpson}")
-for index in range(1, N):
-    area = simpson(pmf_poisson_H0[:index])
-    print(f"index={index}, area={area}")
+area_under_curve_simpson = simpson(pmf_poisson_H0[:alpha_index_x])  # default dx=1
+print(f"The area under the curve using simpson is {area_under_curve_simpson}")
+
+# find alpha = 0.5 (the hard way)
+# for index in range(1, N):
+#     area = simpson(pmf_poisson_H0[:index])
+#     print(f"index={index}, area={area}")
 
 
 # Plotting
@@ -47,7 +49,8 @@ plt.legend()
 plt.grid()
 plt.title(f"Null (H0) vs Alternative (HA) Hypothesis | "
           f"H0_mean = {x[np.argmax(pmf_poisson_H0)]} | "
-          f"HA_mean = {x[np.argmax(pmf_poisson_HA)]} | ")
+          f"HA_mean = {x[np.argmax(pmf_poisson_HA)]} | "
+          f"alpha_index_x = {alpha_index_x} |")
 plt.xlabel("Trials")
 plt.ylabel("Probability")
 plt.show()
