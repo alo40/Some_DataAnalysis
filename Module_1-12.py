@@ -1,16 +1,7 @@
 import numpy as np
-from scipy.special import comb
 from scipy.integrate import simpson
 import matplotlib.pyplot as plt
-import math
-
-
-def calculate_binomial_probability(n, k, p):
-    return comb(n, k) * (p ** k) * (1 - p) ** (n - k)
-
-
-def calculate_poisson_probability(L, k):
-    return np.exp(-L) * (L ** k) / math.factorial(k)
+from myLibrary import calculate_binomial_probability, calculate_poisson_probability
 
 
 # Parameters
@@ -34,7 +25,7 @@ for i in range(0, N):
     pmf_poisson[i] = calculate_poisson_probability(L, i)
 
 # Numerical Integration
-significance_index = 39
+significance_index = 63
 dx = 1  # spacing of integration points, default is 1
 area_under_curve_simpson = simpson(pmf_poisson[:significance_index], dx=dx)
 print(f"The area under the curve using simpson is {area_under_curve_simpson}")
