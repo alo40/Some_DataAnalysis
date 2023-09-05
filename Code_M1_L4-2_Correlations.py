@@ -1,4 +1,4 @@
-from myLibrary import calculate_sample_covariance, calculate_sample_variance
+from myLibrary import calculate_sample_covariance, calculate_sample_variance, calculate_sample_correlationCoeff
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 # x = np.array([2, 4, 6, 8, 10])
 # y = np.array([12, 11, 8, 3, 1])
 
+# exercise data set
 x = np.array([0.0339, 0.0423, 0.213, 0.257, 0.273, 0.273, 0.450, 0.503, 0.503, \
 0.637, 0.805, 0.904, 0.904, 0.910, 0.910, 1.02, 1.11, 1.11, 1.41, \
 1.72, 2.03, 2.02, 2.02, 2.02])
@@ -24,9 +25,10 @@ print(f"y mean = {y.mean()}")
 print(f"x sample standard deviation = {np.sqrt(calculate_sample_variance(x))}")
 print(f"y sample standard deviation = {np.sqrt(calculate_sample_variance(y))}")
 
-cov_xy = calculate_sample_covariance(x, y)
-print(f"my covariance = {cov_xy}")
+print(f"x,y sample covariance = {calculate_sample_covariance(x, y)}")
 # print(f"numpy covariance = {np.cov(x, y)}")  # for testing
+
+print(f"x,y correlation coefficient = {calculate_sample_correlationCoeff(x, y)}")
 
 plt.plot(x, y, 'o')
 plt.show()

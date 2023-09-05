@@ -23,6 +23,10 @@ def calculate_sample_covariance(x, y):
     return ((x - x.mean()) * (y - y.mean())).sum() / (x.size - 1)
 
 
+def calculate_sample_correlationCoeff(x, y):
+    return calculate_sample_covariance(x, y) / np.sqrt(calculate_sample_variance(x) * calculate_sample_variance(y))
+
+
 # NOT USED #############################################################
     # sigma_sum = 0
     # for i in range(x.size):
