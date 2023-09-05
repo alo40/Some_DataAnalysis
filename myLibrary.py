@@ -24,7 +24,19 @@ def calculate_sample_covariance(x, y):
 
 
 def calculate_sample_correlationCoeff(x, y):
-    return calculate_sample_covariance(x, y) / np.sqrt(calculate_sample_variance(x) * calculate_sample_variance(y))
+    cov_xy = calculate_sample_covariance(x, y)
+    var_x = calculate_sample_variance(x)
+    var_y = calculate_sample_variance(y)
+    return cov_xy / np.sqrt(var_x * var_y)
+
+
+def calculate_predictor_coefficients(x, y):
+    r = calculate_sample_correlationCoeff(x, y)
+    s_x = np.sqrt(calculate_sample_variance(x))
+    s_y = np.sqrt(calculate_sample_variance(y))
+    beta_hat_1 = r * s_y / s_x
+    beta_hat_0 = y.mean() - beta_hat_1 * x.mean()
+    return beta_hat_1, beta_hat_0
 
 
 # NOT USED #############################################################
