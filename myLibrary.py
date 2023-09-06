@@ -39,6 +39,10 @@ def calculate_predictor_coefficients(x, y):
     return beta_hat_1, beta_hat_0
 
 
+def calculate_residuals(y, y_hat):
+    return y - y_hat
+
+
 # NOT USED #############################################################
     # sigma_sum = 0
     # for i in range(x.size):
