@@ -43,9 +43,18 @@ def calculate_residuals(y, y_hat):
     return y - y_hat
 
 
-def calculate_multilinear_OLS(X, y):
-    hat_matrix = np.linalg.inv(X.T @ X) @ X.T
+def calculate_multilinear_OLS(x, y):
+    hat_matrix = np.linalg.inv(x.T @ x) @ x.T
     return hat_matrix @ y
+
+
+def calculate_multilinear_T_test(x, y):
+    N = x.shape[0]  # data measurements
+    p = x.shape[1]  # parameters
+    beta_hat = calculate_multilinear_OLS(x, y)
+    variance_hat = ((y - x @ beta_hat) ** 2).sum() / (N - p)
+    sigma = np.sqrt(np.linalg.inv(x.T @ x).diagonal())
+    return beta_hat / (variance_hat * sigma)
 
 
 # NOT USED #############################################################

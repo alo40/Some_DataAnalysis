@@ -1,6 +1,8 @@
 import numpy as np
-from myLibrary import calculate_multilinear_OLS
 from numpy.linalg import inv
+from myLibrary import calculate_multilinear_OLS, calculate_multilinear_T_test
+from scipy.stats import t
+
 
 LogPlanetMass = np.array([-0.31471074,  1.01160091,  0.58778666,  0.46373402, -0.01005034,
          0.66577598, -1.30933332, -0.37106368, -0.40047757, -0.27443685,
@@ -42,8 +44,24 @@ LogStarAge = np.array([ 1.58103844,  1.06471074,  2.39789527,  0.72754861,  0.55
          1.84054963,  2.19722458,  1.89761986,  1.84054963,  0.74193734,
          0.55961579,  1.79175947,  0.91629073,  2.17475172,  1.36097655])
 
+
 y = LogPlanetMass
-X = np.array([np.ones(y.size), LogPlanetRadius, LogPlanetOrbit, StarMetallicity, LogStarMass, LogStarAge]).T
-# beta_hat = inv(X.T @ X) @ X.T @ y
-beta_hat = calculate_multilinear_OLS(X, y)
-print(f"beta_hat = {beta_hat}")
+x = np.array([np.ones(y.size), LogPlanetRadius, LogPlanetOrbit, StarMetallicity, LogStarMass, LogStarAge]).T
+# beta_hat = calculate_multilinear_OLS(x, y)
+# print(f"beta_hat = {beta_hat}")
+x_names = np.array(["beta_0", "LogPlanetRadius", "LogPlanetOrbit", "StarMetallicity", "LogStarMass", "LogStarAge"])
+
+dof = x.shape[0] - x.shape[1]  # degrees of freedom of the t-Distribution
+for i in range(x.shape[1] - 1):
+    T = calculate_multilinear_T_test(x, y)
+    p_value = 1 - t.cdf(T, dof)
+    if np.any(p_value > 0.05):
+        less_significant_parameter_index = np.argmax(p_value)
+        print(f"p_value = {p_value}")
+        print(f"remove {x_names[less_significant_parameter_index]}")
+        x = np.delete(x, less_significant_parameter_index, axis=1)
+        x_names = np.delete(x_names, less_significant_parameter_index, axis=0)
+    else:
+        break
+
+print(f"Most significant parameter is {x_names}")
