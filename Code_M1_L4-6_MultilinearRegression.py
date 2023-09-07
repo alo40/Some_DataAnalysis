@@ -1,4 +1,5 @@
 import numpy as np
+from myLibrary import calculate_multilinear_OLS
 from numpy.linalg import inv
 
 LogPlanetMass = np.array([-0.31471074,  1.01160091,  0.58778666,  0.46373402, -0.01005034,
@@ -43,5 +44,6 @@ LogStarAge = np.array([ 1.58103844,  1.06471074,  2.39789527,  0.72754861,  0.55
 
 y = LogPlanetMass
 X = np.array([np.ones(y.size), LogPlanetRadius, LogPlanetOrbit, StarMetallicity, LogStarMass, LogStarAge]).T
-beta_hat = inv(X.T @ X) @ X.T @ y
+# beta_hat = inv(X.T @ X) @ X.T @ y
+beta_hat = calculate_multilinear_OLS(X, y)
 print(f"beta_hat = {beta_hat}")

@@ -43,6 +43,11 @@ def calculate_residuals(y, y_hat):
     return y - y_hat
 
 
+def calculate_multilinear_OLS(X, y):
+    hat_matrix = np.linalg.inv(X.T @ X) @ X.T
+    return hat_matrix @ y
+
+
 # NOT USED #############################################################
     # sigma_sum = 0
     # for i in range(x.size):
