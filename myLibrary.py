@@ -53,8 +53,8 @@ def calculate_multilinear_T_test(x, y):
     p = x.shape[1]  # parameters
     beta_hat = calculate_multilinear_OLS(x, y)
     variance_hat = ((y - x @ beta_hat) ** 2).sum() / (N - p)
-    sigma = np.sqrt(np.linalg.inv(x.T @ x).diagonal())
-    return beta_hat / (variance_hat * sigma)
+    sigma_squared = np.linalg.inv(x.T @ x).diagonal()
+    return beta_hat / np.sqrt(variance_hat * sigma_squared)
 
 
 # NOT USED #############################################################
@@ -68,3 +68,8 @@ def calculate_multilinear_T_test(x, y):
     #         raise ValueError
     # except ValueError:
     #      print("Input vectors are not the same size")
+
+    # sum = 0
+    # for i in range(N):
+    #     sum += (y[i] - x[i] @ beta_hat) ** 2
+    # variance_hat = sum / (N - p)

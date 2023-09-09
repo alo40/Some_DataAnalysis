@@ -49,7 +49,7 @@ y = LogPlanetMass
 x = np.array([np.ones(y.size), LogPlanetRadius, LogPlanetOrbit, StarMetallicity, LogStarMass, LogStarAge]).T
 # beta_hat = calculate_multilinear_OLS(x, y)
 # print(f"beta_hat = {beta_hat}")
-x_names = np.array(["beta_0", "LogPlanetRadius", "LogPlanetOrbit", "StarMetallicity", "LogStarMass", "LogStarAge"])
+x_parameters = np.array(["beta_0", "LogPlanetRadius", "LogPlanetOrbit", "StarMetallicity", "LogStarMass", "LogStarAge"])
 
 dof = x.shape[0] - x.shape[1]  # degrees of freedom of the t-Distribution
 for i in range(x.shape[1] - 1):
@@ -58,10 +58,10 @@ for i in range(x.shape[1] - 1):
     if np.any(p_value > 0.05):
         less_significant_parameter_index = np.argmax(p_value)
         print(f"p_value = {p_value}")
-        print(f"remove {x_names[less_significant_parameter_index]}")
+        print(f"remove {x_parameters[less_significant_parameter_index]}\n")
         x = np.delete(x, less_significant_parameter_index, axis=1)
-        x_names = np.delete(x_names, less_significant_parameter_index, axis=0)
+        x_parameters = np.delete(x_parameters, less_significant_parameter_index, axis=0)
     else:
         break
 
-print(f"Most significant parameter is {x_names}")
+print(f"Most significant parameter is {x_parameters}")
