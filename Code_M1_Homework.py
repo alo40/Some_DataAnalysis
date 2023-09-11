@@ -13,27 +13,40 @@ df = pd.read_csv(csv_file_path)
 fig, ax = plt.subplots(2, 2)
 time_interval = df['seconds']
 number_events = df['count']
+# number_events = number_events.replace(0, 20)  # only for testing (not valid)
+# number_events = number_events.replace(1, 10)  # only for testing (not valid)
 average_rate = number_events / time_interval
 df['rate'] = average_rate  # only for comparison
 
-k = np.arange(0, 100)
-i = 20  # series index
-L_i = average_rate[i] * time_interval[i]
-poisson_distribution = np.exp(-L_i) * (L_i ** k) / factorial(k)
-# poisson = calculate_poisson_probability(average_number_events, k)
+# # Testing only
+# k = np.arange(0, 100)
+# i = 20  # series index
+# L_i = average_rate[i] * time_interval[i]
+# poisson_distribution = np.exp(-L_i) * (L_i ** k) / factorial(k)
 
 # MLE
 sample_size = df.shape[0]
 average_rate_estimator = number_events.sum() / (sample_size * time_interval.mean())
+# poisson_parameter_estimator = average_rate_estimator * time_interval.mean()
+poisson_parameter_estimator = number_events.sum() / sample_size
 print(f"average rate estimator = {average_rate_estimator}")
+print(f"Poisson parameter estimator = {poisson_parameter_estimator}")
 
+# Estimated Poisson distribution
+k = np.arange(0, 100)
+poisson_distribution = np.exp(-poisson_parameter_estimator) * (poisson_parameter_estimator ** k) / factorial(k)
+
+# Plotting
 ax[0, 0].plot(average_rate, 'x')
-ax[0, 0].plot([0, 100], [average_rate_estimator, average_rate_estimator], '--')
+ax[0, 0].plot([0, 100], [average_rate_estimator, average_rate_estimator], '--', label='average rate estimator')
 ax[0, 0].set_title('average rate (per second) [number of events / time interval]')
+ax[0, 0].legend()
 
-ax[0, 1].plot(poisson_distribution, color='red')
-ax[0, 1].set_title(f"Poisson distribution for paramater = {L_i}")
-# ax[0, 1].set_xlim(0, 10)
+ax[0, 1].plot(poisson_distribution, color='red', label='poisson distribution estimator')
+ax[0, 1].hist(number_events, bins=np.arange(0, 200), density='True', label='observations')
+ax[0, 1].set_title(f"Poisson distribution for paramater = {poisson_parameter_estimator}")
+ax[0, 1].set_xlim(0, 100)
+ax[0, 1].legend()
 
 ax[1, 0].plot(time_interval, '+')
 ax[1, 0].set_title('time interval [seconds] = t_i')
@@ -41,25 +54,7 @@ ax[1, 0].set_title('time interval [seconds] = t_i')
 ax[1, 1].plot(number_events, 'v')
 ax[1, 1].set_title('number of events [counts] = G_i')
 
-# ax.plot(k, poisson_distribution)
 plt.show()
-
-
-# # observations
-# fig, ax = plt.subplots(1, 1)
-# df['parameter'] = df['count'] * df['seconds']
-# ax.hist(df['parameter'], bins=np.arange(0, 200), density='True', label='observations')
-# ax.set_ylim(0, 0.04)
-# # ax.set_xlim(50, 150)
-#
-# # poisson distribution
-# lambda_hat = 1 / df.shape[0] * (df['parameter']).sum()  # MLE
-# # lambda_hat = 100  # test only
-# x = np.arange(0, 500)
-# ax.plot(x, poisson.pmf(x, lambda_hat), label='poisson pmf')
-#
-# plt.legend()
-# plt.show()
 
 
 # # data visualization
