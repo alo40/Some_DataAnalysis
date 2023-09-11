@@ -16,7 +16,7 @@ number_events = df['count']
 # number_events = number_events.replace(0, 20)  # only for testing (not valid)
 # number_events = number_events.replace(1, 10)  # only for testing (not valid)
 average_rate = number_events / time_interval
-df['rate'] = average_rate  # only for comparison
+# df['rate'] = average_rate  # only for comparison
 
 # # Testing only
 # k = np.arange(0, 100)
@@ -34,7 +34,8 @@ print(f"Poisson parameter estimator = {poisson_parameter_estimator}")
 
 # Estimated Poisson distribution
 k = np.arange(0, 100)
-poisson_distribution = np.exp(-poisson_parameter_estimator) * (poisson_parameter_estimator ** k) / factorial(k)
+# poisson_distribution = np.exp(-poisson_parameter_estimator) * (poisson_parameter_estimator ** k) / factorial(k)
+poisson_distribution = calculate_poisson_probability(poisson_parameter_estimator, k)
 
 # Plotting
 ax[0, 0].plot(average_rate, 'x')
@@ -57,35 +58,15 @@ ax[1, 1].set_title('number of events [counts] = G_i')
 plt.show()
 
 
-# # data visualization
-# fig, ax = plt.subplots(2, 2)
-#
-# ax[0, 0].plot(df.index.values, df['seconds'], 'v')
-# ax[0, 0].set_xlabel('index')
-# ax[0, 0].set_ylabel('seconds')
-# ax[0, 0].set_ylim(0, 300)
-#
-# ax[0, 1].plot(df.index.values, df['count'], '+')
-# ax[0, 1].set_xlabel('index')
-# ax[0, 1].set_ylabel('count')
-#
-# ax[1, 0].plot(df.index.values, df['parameter'], 'x')
-# ax[1, 0].set_xlabel('index')
-# ax[1, 0].set_ylabel('parameter')
-# ax[1, 0].set_ylim(0, 300)
-#
-# ax[1, 1].plot(df['seconds'], df['count'], 'o')
-# ax[1, 1].set_xlabel('seconds')
-# ax[1, 1].set_ylabel('count')
-#
-# plt.show()
+# Likelihood ratio test
 
-# # NOT USED
-# number_events = number_events.replace(1, 0)  # only for testing (not valid)
-# number_events = number_events.replace(2, 0)  # only for testing (not valid)
-# number_events = number_events.replace(3, 0)  # only for testing (not valid)
-# number_events = number_events.replace(4, 0)  # only for testing (not valid)
-# number_events = number_events.replace(5, 0)  # only for testing (not valid)
-# number_events = number_events.replace(6, 0)  # only for testing (not valid)
-# number_events = number_events.replace(7, 0)  # only for testing (not valid)
-# average_number_events = number_events / time_interval  # usual parameter lambda (probably wrong)
+# parameters
+lambda_H0_MLE = average_rate_estimator  # null hypothesis
+lambda_HA_MLE = number_events / time_interval
+
+L_H0 = calculate_poisson_probability(lambda_H0_MLE * time_interval, number_events).prod()
+L_HA = calculate_poisson_probability(lambda_HA_MLE * time_interval, number_events).prod()
+# df['parameter_HA'] = lambda_HA_MLE * time_interval
+# df['L_HA'] = L_HA  # for comparison only
+T = -2 * np.log(L_H0 / L_HA)
+print(f"T = {T}")

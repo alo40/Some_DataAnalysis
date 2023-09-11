@@ -8,7 +8,8 @@ def calculate_binomial_probability(n, k, p):
 
 
 def calculate_poisson_probability(L, k):
-    return expon(-L) * (L ** k) / factorial(k)
+    # return expon(-L) * (L ** k) / factorial(k)
+    return np.exp(-L) * (L ** k) / factorial(k)
 
 
 def calculate_hypergeometric_distribution(n1, n2, k1, k2):
