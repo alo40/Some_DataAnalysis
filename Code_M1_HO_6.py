@@ -18,7 +18,8 @@ gen_i = 3051  # not used if for loop used
 N_ALL = df_ALL.shape[1]
 N_AML = df_AML.shape[1]
 
-count_significant_gen = 0
+
+p_value_array = np.zeros(df.shape[0])
 for gen_i in range(1, df.shape[0]):
 
     sample_mean_ALL_gen_i = df_ALL.loc[gen_i].mean()
@@ -45,10 +46,29 @@ for gen_i in range(1, df.shape[0]):
 
     p_value_gen_i = 2 * stats.t.sf(abs(t_Welch_gen_i), degrees_freedom_gen_i)  # two-sided test, as H0 assume same means
 
-    if p_value_gen_i <= 0.05:
-        count_significant_gen += 1
+    p_value_array[gen_i] = p_value_gen_i
 
-print(f"The number of significant genes is {count_significant_gen}")
+uncorrected_significant_counts = (p_value_array[1:] <= 0.05).sum()
+print(f"The number of significant genes for the uncorrected case is {uncorrected_significant_counts}")
+
+m = df.shape[0]
+i = np.arange(1, m)
+sorted_p_value_array = np.sort(p_value_array[1:])
+
+HB_significant_counts = (sorted_p_value_array * (m - i + 1) <= 0.05).sum()
+print(f"The number of significant genes using the Holm-Bonferroni correction is {HB_significant_counts}")
+
+BH_significant_counts = (sorted_p_value_array * m / i <= 0.05).sum()
+print(f"The number of significant genes using the Benjamini-Hochberg correction is {BH_significant_counts}")
+
+plt.plot(0.05 / (m - i + 1), '-r', label="Holm-Bonferroni correction")
+plt.plot(0.05 * i / m, '-b', label="Benjamini-Hochberg correction")
+plt.plot(np.sort(p_value_array[1:]), '-g', label="sorted p-values")  # don't count index zero
+# plt.xlim(0, 120)
+# plt.ylim(0, 0.00002)
+plt.yscale("log")
+plt.legend()
+plt.show()
 
 # # my results
 # print("\nMy results:")
@@ -83,7 +103,7 @@ print(f"The number of significant genes is {count_significant_gen}")
 # ax[0].plot(df[f"{patient_1}"], 'bx')
 # ax[1].plot(df[f"{patient_2}"], 'ro')
 
-plt.show()
+# plt.show()
 
 # # means (not correct!)
 # plt.plot(df_ALL.mean(), label='ALL', marker='x')
