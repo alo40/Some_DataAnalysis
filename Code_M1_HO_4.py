@@ -37,6 +37,18 @@ k = np.arange(0, 100)
 # poisson_distribution = np.exp(-poisson_parameter_estimator) * (poisson_parameter_estimator ** k) / factorial(k)
 poisson_distribution = calculate_poisson_probability(poisson_parameter_estimator, k)
 
+# Likelihood ratio test
+# parameters
+lambda_H0_MLE = average_rate_estimator  # null hypothesis
+lambda_HA_MLE = number_events / time_interval
+
+L_H0 = calculate_poisson_probability(lambda_H0_MLE * time_interval, number_events).prod()
+L_HA = calculate_poisson_probability(lambda_HA_MLE * time_interval, number_events).prod()
+# df['parameter_HA'] = lambda_HA_MLE * time_interval
+# df['L_HA'] = L_HA  # for comparison only
+T = -2 * np.log(L_H0 / L_HA)
+print(f"T = {T}")
+
 # Plotting
 ax[0, 0].plot(average_rate, 'x')
 ax[0, 0].plot([0, 100], [average_rate_estimator, average_rate_estimator], '--', label='average rate estimator')
@@ -56,17 +68,3 @@ ax[1, 1].plot(number_events, 'v')
 ax[1, 1].set_title('number of events [counts] = G_i')
 
 plt.show()
-
-
-# Likelihood ratio test
-
-# parameters
-lambda_H0_MLE = average_rate_estimator  # null hypothesis
-lambda_HA_MLE = number_events / time_interval
-
-L_H0 = calculate_poisson_probability(lambda_H0_MLE * time_interval, number_events).prod()
-L_HA = calculate_poisson_probability(lambda_HA_MLE * time_interval, number_events).prod()
-# df['parameter_HA'] = lambda_HA_MLE * time_interval
-# df['L_HA'] = L_HA  # for comparison only
-T = -2 * np.log(L_H0 / L_HA)
-print(f"T = {T}")
