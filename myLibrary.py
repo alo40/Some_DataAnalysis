@@ -49,6 +49,10 @@ def calculate_multilinear_OLS(x, y):
     return hat_matrix @ y
 
 
+def add_intercept(X):
+    return np.concatenate((np.ones_like(X[:,:1]), X), axis=1)
+
+
 def calculate_multilinear_T_test(x, y):
     N = x.shape[0]  # data measurements
     p = x.shape[1]  # parameters
