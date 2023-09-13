@@ -45,8 +45,8 @@ def calculate_residuals(y, y_hat):
 
 
 def calculate_multilinear_OLS(x, y):
-    hat_matrix = np.linalg.inv(x.T @ x) @ x.T
-    return hat_matrix @ y
+    beta_hat = np.linalg.inv(x.T @ x) @ x.T @ y
+    return beta_hat
 
 
 def add_intercept(X):
