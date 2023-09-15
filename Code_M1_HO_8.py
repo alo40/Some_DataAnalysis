@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import stats
 from numpy import genfromtxt
-from myLibrary import calculate_multilinear_OLS, add_intercept
+from myLibrary import calculate_multilinear_OLS, add_intercept, cal_cost, gradient_descent
 
 
 # def gradient_descent(gradient, start, learn_rate, n_iter=100, tolerance=1e-06):
@@ -41,28 +41,6 @@ from myLibrary import calculate_multilinear_OLS, add_intercept
 #         loss_function += diff
 #     return loss_function, diff_array
 
-
-def cal_cost(theta, X, y):
-    m = len(y)
-    predictions = X.dot(theta)
-    cost = (1 / 2 * m) * np.sum(np.square(predictions - y))
-    return cost
-
-
-def gradient_descent(X, y, theta, learning_rate=0.01, iterations=100):
-    m = len(y)
-    convergence = 0
-    cost_history = np.zeros(iterations)
-    theta_history = np.zeros((iterations, 3))
-    for i in range(iterations):
-        prediction = np.dot(X, theta)
-        theta = theta - (1 / m) * learning_rate * X.T.dot(prediction - y)
-        theta_history[i, :] = theta.T[0]
-        cost_history[i] = cal_cost(theta, X, y)
-        if cost_history[i] <= 1e-15:
-            convergence = i
-            break
-    return theta, cost_history, theta_history, convergence
 
 # stopping condition
 # if np.sqrt(np.sum(np.square((beta - beta_last)/beta))) < precision

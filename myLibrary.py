@@ -62,6 +62,30 @@ def calculate_multilinear_T_test(x, y):
     return beta_hat / np.sqrt(variance_hat * sigma_squared)
 
 
+def cal_cost(theta, X, y):
+    m = len(y)
+    predictions = X.dot(theta)
+    cost = (1 / 2 * m) * np.sum(np.square(predictions - y))
+    return cost
+
+
+def gradient_descent(X, y, theta, learning_rate=0.01, iterations=1_000_000):
+    m = len(y)
+    convergence = 0
+    cost_history = np.zeros(iterations)
+    theta_history = np.zeros((iterations, X.shape[1]))
+    for i in range(iterations):
+        prediction = np.dot(X, theta)
+        theta = theta - (1 / m) * learning_rate * X.T.dot(prediction - y)
+        theta_history[i, :] = theta.T[0]
+        cost_history[i] = cal_cost(theta, X, y)
+        if cost_history[i] <= 1e2:
+            print(f"Convergence at step {i}")
+            convergence = i
+            break
+    return theta, cost_history, theta_history, convergence
+
+
 # NOT USED #############################################################
     # sigma_sum = 0
     # for i in range(x.size):
