@@ -86,6 +86,21 @@ def gradient_descent(X, y, theta, learning_rate=0.01, iterations=1_000_000):
     return theta, cost_history, theta_history, convergence
 
 
+def calculate_vector_sample_mean(x):
+    n = x.shape[0]
+    I = np.ones(n)
+    return 1 / n * x.T @ I
+
+
+def calculate_sample_cov_matrix(x):
+    x_mean = calculate_vector_sample_mean(x)
+    n = x.shape[0]
+    outer_sum = 0
+    for i in range(n):
+        outer_sum += np.outer(x[i], x[i].T)
+    return 1 / n * outer_sum - np.outer(x_mean, x_mean.T)
+
+
 # NOT USED #############################################################
     # sigma_sum = 0
     # for i in range(x.size):
