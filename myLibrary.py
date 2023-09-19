@@ -93,12 +93,21 @@ def calculate_vector_sample_mean(x):
 
 
 def calculate_sample_cov_matrix(x):
-    x_mean = calculate_vector_sample_mean(x)
     n = x.shape[0]
-    outer_sum = 0
-    for i in range(n):
-        outer_sum += np.outer(x[i], x[i].T)
-    return 1 / n * outer_sum - np.outer(x_mean, x_mean.T)
+    H = calculate_orthogonal_matrix_H(x)
+    return 1 / n * x.T @ H @ x
+    # x_mean = calculate_vector_sample_mean(x)
+    # outer_sum = 0
+    # for i in range(n):
+    #     outer_sum += np.outer(x[i], x[i].T)
+    # return 1 / n * outer_sum - np.outer(x_mean, x_mean.T)
+
+
+def calculate_orthogonal_matrix_H(x):
+    n = x.shape[0]
+    I = np.ones(n)
+    In = np.identity(n)
+    return In - 1 / n * np.outer(I, I.T)
 
 
 # NOT USED #############################################################
