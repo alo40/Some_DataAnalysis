@@ -19,7 +19,7 @@ x1 = [ 1,  3, -1]
 y1 = [ 2,  4,  0]
 z1 = [ 0,  0,  0]
 
-n = 0  # select vector
+n = 2  # select vector
 for i in [n]:
     ax.plot([x0[i], x1[i]], [y0[i], y1[i]], zs=[z0[i], z1[i]], marker='o', label=f"vector {i}")
 
@@ -35,6 +35,10 @@ ax.plot([0, v[0]], [0, v[1]], zs=[0, 0], marker='o', label="projection")
 ax.set_xlabel('X-Axis')
 ax.set_ylabel('Y-Axis')
 ax.set_zlabel('Z-Axis')
+
+ax.set_xlim(-1, 1)
+ax.set_ylim(-1, 1)
+ax.set_zlim(0, 5)
 
 ax.view_init(elev=90, azim=-90)
 plt.legend()
