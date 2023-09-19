@@ -110,6 +110,10 @@ def calculate_orthogonal_matrix_H(x):
     return In - 1 / n * np.outer(I, I.T)
 
 
+def calculate_projection_vector(x, u):
+    return np.outer(np.dot(u, x), u)[0]
+
+
 # NOT USED #############################################################
     # sigma_sum = 0
     # for i in range(x.size):
