@@ -114,6 +114,12 @@ def calculate_projection_vector(x, u):
     return np.outer(np.dot(u, x), u)[0]
 
 
+def calculate_projection_scalar(x, u):
+    p = calculate_projection_vector(x, u)
+    return p @ u
+    # return u / np.linalg.norm(u) @ x  # also valid
+
+
 # NOT USED #############################################################
     # sigma_sum = 0
     # for i in range(x.size):
