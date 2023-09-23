@@ -1,13 +1,18 @@
-from sympy import symbols, solve, exp, log, lambdify
+from sympy import symbols, solve, exp, log, lambdify, sqrt
 from scipy.optimize import fsolve
 
-# from sympy import *
-
 a = symbols('a', positive=True)
-x = exp(-1)
-epsilon = exp(-2)
-y = exp(-a ** 2)
-delta = exp(-4 * a ** 2)
+
+# using normal distribution (SNE)
+x = exp(-1**2)
+epsilon = exp(-sqrt(2)**2)
+# y = exp(-a**2)
+# delta = exp(-(2 * a)**2)
+
+# using t-distribution (t-SNE) - only for y's
+y = (1 + a**2)**(-1)
+delta = (1 + (2 * a)**2)**(-1)
+
 p12 = x / (2 * x + epsilon)
 p23 = epsilon / (2 * x + epsilon)
 q12 = y / (2 * y + delta)
@@ -17,5 +22,5 @@ KL = 2 * p12 * log(p12 / q12) + p23 * log(p23 / q23)
 
 
 func_np = lambdify(a, KL, modules=['numpy'])
-solution = fsolve(func_np, 0.5)
+solution = fsolve(func_np, 1.)
 print(solution)
