@@ -6,6 +6,7 @@ from sklearn.manifold import MDS
 from sklearn.manifold import TSNE
 # import pandas as pd
 # import polars as pl
+from sklearn.cluster import KMeans
 
 # # transform npy to csv (use only once)
 # X = np.load("data/p1/X.npy")
@@ -45,9 +46,28 @@ X = np.log2(X + 1)
 # plt.legend()
 # plt.show()
 
+# # elbow plot using k-means
+# n = 20
+# all_kmeans = [KMeans(n_clusters=i+1, n_init=10) for i in range(n)]
+# for i in range(n):
+#     all_kmeans[i].fit(X)
+# intertias = [all_kmeans[i].inertia_ for i in range(n)]
+# plt.title("KMeans Sum of Squares Criterion")
+# plt.xlabel("# cluster")
+# plt.ylabel("within-cluster sum of squares")
+# plt.plot(intertias)
+# plt.xlim(0, n)
+# plt.xticks(np.arange(0, n, step=1))
+# plt.grid()
+# plt.show()
+
+# # k-means colors
+# kmeans = KMeans(n_clusters=3, n_init=10)
+# y = kmeans.fit_predict(X)
+#
 # # PCA visualization (2 principal components)
 # fig, ax = plt.subplots(1, 1, figsize=(10, 3))
-# ax.scatter(X.dot(pca.components_[0]),  X.dot(pca.components_[1]), alpha=0.3)
+# ax.scatter(X.dot(pca.components_[0]),  X.dot(pca.components_[1]), c=y)
 # ax.set(xlabel="Projected data onto first PCA component", ylabel="y")
 # plt.tight_layout()
 # plt.show()
@@ -56,10 +76,14 @@ X = np.log2(X + 1)
 # embedding = MDS(n_components=2, normalized_stress='auto')
 # X_transformed = embedding.fit_transform(X)
 # X_transformed.shape
-# plt.scatter(X_transformed[:, 0], X_transformed[:, 1])
+# plt.scatter(X_transformed[:, 0], X_transformed[:, 1], c=y)
 # plt.show()
 
 # TSNE visualization
-X_embedded = TSNE(n_components=50, learning_rate='auto',init='random', perplexity=40).fit_transform(X)
+pca = PCA()  # Initialize with n_components parameter to only find the top eigenvectors
+z = pca.fit_transform(X)
+tsne = TSNE(n_components=2, perplexity=40, verbose=1)
+X_embedded = tsne.fit_transform(z[:, 0:50])
 plt.scatter(X_embedded[:, 0], X_embedded[:, 1])
+plt.axis("equal")
 plt.show()
