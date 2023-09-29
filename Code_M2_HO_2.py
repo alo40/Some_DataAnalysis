@@ -24,46 +24,58 @@ X = np.log2(X + 1)
 # kmeans = KMeans(n_clusters=50, n_init=10)
 # y = kmeans.fit_predict(X)
 
-# PCA
-pca = PCA(n_components=2)
-pca.fit(X)
-
-kmeans = KMeans(n_clusters=4, n_init=10)
-y = kmeans.fit_predict(X)
-
-fig, ax = plt.subplots(1, 1, figsize=(10, 3))
-ax.scatter(X.dot(pca.components_[0]),  X.dot(pca.components_[1]), c=y)
-ax.set(xlabel="Projected data onto first PCA component", ylabel="y")
-plt.tight_layout()
-
-# plt.plot(np.arange(2, 5), [silhouette_score(X, KMeans(i, n_init=50).fit(X).labels_) for i in range(2, 5)])
-plt.show()
-
-
-# # MDS visualization
-# embedding = MDS(n_components=2, normalized_stress='auto')
-# X_transformed = embedding.fit_transform(X)
-# X_transformed.shape
-# plt.scatter(X_transformed[:, 0], X_transformed[:, 1], c=y)
-# plt.show()
-
-
-# # TSNE visualization
-# pca = PCA()  # Initialize with n_components parameter to only find the top eigenvectors
-# z = pca.fit_transform(X)
-# tsne = TSNE(n_components=2, perplexity=100, verbose=1)
-# X_embedded = tsne.fit_transform(z[:, 0:50])
+# # PCA
+# pca = PCA(n_components=2)
+# pca.fit(X)
 #
 # kmeans = KMeans(n_clusters=4, n_init=10)
 # y = kmeans.fit_predict(X)
 #
+# fig, ax = plt.subplots(1, 1, figsize=(10, 3))
+# ax.scatter(X.dot(pca.components_[0]),  X.dot(pca.components_[1]), c=y)
+# ax.set(xlabel="Projected data onto first PCA component", ylabel="y")
+# plt.tight_layout()
+#
+# # plt.plot(np.arange(2, 5), [silhouette_score(X, KMeans(i, n_init=50).fit(X).labels_) for i in range(2, 5)])
+# plt.show()
+
+
+# TSNE visualization
+pca = PCA()  # Initialize with n_components parameter to only find the top eigenvectors
+z = pca.fit_transform(X)
+tsne = TSNE(n_components=2, perplexity=140, verbose=1)
+X_embedded = tsne.fit_transform(z[:, 0:50])
+
+kmeans = KMeans(n_clusters=50, n_init=10)
+y = kmeans.fit_predict(X)
+
 # plt.scatter(X_embedded[:, 0], X_embedded[:, 1], c=y)
 # plt.axis("equal")
-#
-# # plt.plot(np.arange(2,10),
-# #          [silhouette_score(X_embedded,KMeans(i,n_init=50).fit(X_embedded).labels_) for i in range(2,10)])
-#
 # plt.show()
+
+
+# # PCA
+# pca = PCA(n_components=2)
+# pca.fit(X)
+#
+# # kmeans = KMeans(n_clusters=4, n_init=10)
+# # y = kmeans.fit_predict(X)
+#
+# fig, ax = plt.subplots(1, 1, figsize=(10, 3))
+# ax.scatter(X.dot(pca.components_[0]),  X.dot(pca.components_[1]), c=y)
+# ax.set(xlabel="Projected data onto first PCA component", ylabel="y")
+# plt.tight_layout()
+#
+# # plt.plot(np.arange(2, 5), [silhouette_score(X, KMeans(i, n_init=50).fit(X).labels_) for i in range(2, 5)])
+# plt.show()
+
+
+# MDS visualization
+embedding = MDS(n_components=2, normalized_stress='auto')
+X_transformed = embedding.fit_transform(X)
+X_transformed.shape
+plt.scatter(X_transformed[:, 0], X_transformed[:, 1], c=y)
+plt.show()
 
 
 # ###########################################################################################
@@ -109,3 +121,7 @@ plt.show()
 # )
 # plt.legend()
 # plt.show()
+
+# TSNE
+# plt.plot(np.arange(2,10),
+#          [silhouette_score(X_embedded,KMeans(i,n_init=50).fit(X_embedded).labels_) for i in range(2,10)])

@@ -72,7 +72,7 @@ from yellowbrick.cluster import SilhouetteVisualizer
 # Horizontal axes on the plots are not all the same range, be careful
 # for i in range(2, 6):
 
-i = 6
+i = 2
 clustering = KMeans(i, n_init=50)
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
 visualizer = SilhouetteVisualizer(clustering, colors='yellowbrick', is_fitted=False, ax=ax1)
