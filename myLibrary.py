@@ -3,6 +3,18 @@ from scipy.special import comb, factorial
 from scipy.stats import expon
 
 
+def find_nearest_value(array, value):
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return array[idx]
+
+
+def find_nearest_index(array, value):
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return idx
+
+
 def calculate_binomial_probability(n, k, p):
     return comb(n, k) * (p ** k) * (1 - p) ** (n - k)
 
