@@ -10,7 +10,6 @@ from sklearn.cluster import KMeans
 from tqdm import trange
 
 
-
 # data load
 X = np.load("data/p2_unsupervised/X.npy")
 X = np.log2(X + 1)
