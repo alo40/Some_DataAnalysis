@@ -81,13 +81,39 @@ from sklearn.manifold import TSNE
 # # np.save('data/p2_unsupervised_reduced/model_coefficients.npy', model.coef_)  # do it only once!
 
 
-# -----------------------------------------------------------------
-# regression model using selected features
+# # -----------------------------------------------------------------
+# # regression model using top-100 selected features
+#
+# # find top 100 features
+# model_coef = np.load("data/p2_unsupervised_reduced/model_coefficients.npy")
+# sum_column = np.abs(model_coef).sum(axis=0)
+# top_features = np.argsort(np.abs(sum_column))[::-1][:100]
+#
+# # load evaluation train and test data
+# x_train = np.load("data/p2_evaluation_reduced/X_train.npy")
+# x_test = np.load("data/p2_evaluation_reduced/X_test.npy")
+# y_train = np.load("data/p2_evaluation_reduced/y_train.npy")
+# y_test = np.load("data/p2_evaluation_reduced/y_test.npy")
+#
+# # use selected features
+# x_train_selection = x_train[:, top_features]
+# x_test_selection = x_test[:, top_features]
+#
+# # train model
+# model = LogisticRegression(solver='liblinear', C=0.05, multi_class='ovr', penalty='l2')
+# model.fit(x_train_selection, y_train)
+#
+# y_pred = model.predict(x_test_selection)
+#
+# model.score(x_train_selection, y_train)
+# model.score(x_test_selection, y_test)
+#
+# # confusion_matrix(y_test, y_pred)
+# # print(classification_report(y_test, y_pred))
 
-# find top 100 features
-model_coef = np.load("data/p2_unsupervised_reduced/model_coefficients.npy")
-sum_column = np.abs(model_coef).sum(axis=0)
-top_features = np.argsort(np.abs(sum_column))[::-1][:100]
+
+# -----------------------------------------------------------------
+# regression model using random selected features
 
 # load evaluation train and test data
 x_train = np.load("data/p2_evaluation_reduced/X_train.npy")
@@ -95,9 +121,13 @@ x_test = np.load("data/p2_evaluation_reduced/X_test.npy")
 y_train = np.load("data/p2_evaluation_reduced/y_train.npy")
 y_test = np.load("data/p2_evaluation_reduced/y_test.npy")
 
+# find 100 random features
+pool_of_numbers = np.arange(1, 20001)  # Numbers from 1 to 20,000
+random_features = np.random.choice(pool_of_numbers, size=100, replace=False)
+
 # use selected features
-x_train_selection = x_train[:, top_features]
-x_test_selection = x_test[:, top_features]
+x_train_selection = x_train[:, random_features]
+x_test_selection = x_test[:, random_features]
 
 # train model
 model = LogisticRegression(solver='liblinear', C=0.05, multi_class='ovr', penalty='l2')
@@ -105,22 +135,11 @@ model.fit(x_train_selection, y_train)
 
 y_pred = model.predict(x_test_selection)
 
-model.score(x_train_selection, y_train)
-model.score(x_test_selection, y_test)
+print(f"model score train data: {model.score(x_train_selection, y_train)}")
+print(f"model score train data: {model.score(x_test_selection, y_test)}")
 
 # confusion_matrix(y_test, y_pred)
 # print(classification_report(y_test, y_pred))
-
-
-# # -----------------------------------------------------------------
-# # regression model using selected features
-#
-# # load evaluation train and test data
-# x_train = np.load("data/p2_evaluation_reduced/X_train.npy")
-# x_test = np.load("data/p2_evaluation_reduced/X_test.npy")
-# y_train = np.load("data/p2_evaluation_reduced/y_train.npy")
-# y_test = np.load("data/p2_evaluation_reduced/y_test.npy")
-
 
 
 # # -----------------------------------------------------------------
