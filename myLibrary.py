@@ -132,6 +132,10 @@ def calculate_projection_scalar(x, u):
     # return u / np.linalg.norm(u) @ x  # also valid
 
 
+def calculate_ResidualSquareSum(x, y, a, b, c):
+    d = (np.abs(a * x + b * y + c) / np.sqrt(a ** 2 + b ** 2)) ** 2
+    return d.sum()
+
 # NOT USED #############################################################
     # sigma_sum = 0
     # for i in range(x.size):
