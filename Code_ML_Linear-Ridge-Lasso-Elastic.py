@@ -1,11 +1,16 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression, RidgeCV, LassoCV, ElasticNetCV
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
 from myLibrary import calculate_ResidualSquareSum
 
 
 # # ------------------------------------------------------------------------------------------------------
+# # DATA
+
 # # generate linear noisy 2d data
 # np.random.seed(10)
 # slope = 4.0
@@ -14,56 +19,105 @@ from myLibrary import calculate_ResidualSquareSum
 # noise = np.random.normal(0, 2, 100)  # Add random noise with mean 0 and standard deviation 2
 # y = slope * x + intercept + noise
 
-# generate non-linear noisy data
-np.random.seed(10)
-x = np.array([i*np.pi/180 for i in range(60, 300, 4)])
-y = np.sin(x) + np.random.normal(0,0.2,len(x))
+# # generate non-linear noisy data
+# np.random.seed(10)
+# x = np.array([i*np.pi/180 for i in range(60, 300, 4)])
+# y = np.sin(x) + np.random.normal(0,0.2,len(x))
+
+# # p2_evaluation_reduced
+# x_train = np.load("data/p2_evaluation_reduced/X_train.npy")
+# x_test = np.load("data/p2_evaluation_reduced/X_test.npy")
+# y_train = np.load("data/p2_evaluation_reduced/y_train.npy")
+# y_test = np.load("data/p2_evaluation_reduced/y_train.npy")
+
+# # choosing a cluster as data
+# # x = np.load("data/p1/X.npy")
+# x = np.load("data/p2_unsupervised_reduced/X.npy")
+# x = np.log2(x + 1)
+# z = PCA().fit_transform(x)
+# c = KMeans(n_clusters=7, n_init=100).fit_predict(x)
+# d = np.concatenate((z[:, 0][:, np.newaxis], z[:, 1][:, np.newaxis], c[:, np.newaxis]), axis=1)
+# np.save('data/M2_HO/data.npy', d)  # do it only once!
+
+# save data as .npy
+data = np.load("data/M2_HO/data.npy")
+d = pd.DataFrame(data=data, columns=['x', 'y', 'cluster'])
+cluster_1 = 1.0
+cluster_2 = 1.0
+cluster_3 = 1.0
+x = d['x'][(d['cluster'] == cluster_1) | (d['cluster'] == cluster_2) | (d['cluster'] == cluster_3)]
+y = d['y'][(d['cluster'] == cluster_1) | (d['cluster'] == cluster_2) | (d['cluster'] == cluster_3)]
+x = np.array(x)
+y = np.array(y)
+
+# # testing plotting
+# plt.scatter(d['x'], d['y'], c=d['cluster'])  # for testing only
+# for i, label in enumerate(d['cluster']):
+#     plt.annotate(str(label), (d['x'][i], d['y'][i]), fontsize=7)
+# plt.show()
 
 # split data
-x_train, x_test, y_train, y_test = train_test_split(x[:, np.newaxis], y[:, np.newaxis], test_size=0.8)
+x_train, x_test, y_train, y_test = train_test_split(x[:, np.newaxis], y[:, np.newaxis], test_size=0.2, shuffle=True)
+
+
+# # ------------------------------------------------------------------------------------------------------
+# # REGRESSION MODEL
 
 # LinearRegression from sklearn
 linear_reg = LinearRegression().fit(x_train, y_train)
-linear_coef = linear_reg.coef_[0][0]
-linear_intercept = linear_reg.intercept_[0]
+linear_coef = linear_reg.coef_[0]
+linear_intercept = linear_reg.intercept_
 linear_y = linear_coef * x + linear_intercept
-linear_RSS = calculate_ResidualSquareSum(x_test, y_test, a=linear_coef, b=-1, c=linear_intercept)
-print(f"Linear regression RSS: {linear_RSS}")
+# linear_RSS = calculate_ResidualSquareSum(x_test, y_test, a=linear_coef, b=-1, c=linear_intercept)
+# print(f"Linear regression RSS: {linear_RSS}")
+# print(f"linear regression score: {linear_reg.score(x_test, y_test)}")
+
+alphas = np.logspace(-4, 4, 1000, endpoint=True)
+alphas = [200]
 
 # RidgeCV regression from sklearn (L2)
-ridge_reg = RidgeCV(alphas=[1e-3, 1e-2, 1e-1, 1, 10]).fit(x_train, y_train)
-ridge_coef = ridge_reg.coef_[0][0]
-ridge_intercept = ridge_reg.intercept_[0]
+ridge_reg = RidgeCV(alphas=alphas, cv=10).fit(x_train, y_train)
+ridge_coef = ridge_reg.coef_[0]
+ridge_intercept = ridge_reg.intercept_
 ridge_y = ridge_coef * x + ridge_intercept
-ridge_RSS = calculate_ResidualSquareSum(x_test, y_test, a=ridge_coef, b=-1, c=ridge_intercept)
-print(f"Ridge regression RSS: {ridge_RSS}")
-
+# ridge_RSS = calculate_ResidualSquareSum(x_test, y_test, a=ridge_coef, b=-1, c=ridge_intercept)
+# print(f"Ridge regression RSS: {ridge_RSS}")
+# print(f"ridge regression score: {ridge_reg.score(x_test, y_test)}")
+#
 # LassoCV regression from sklearn (L1)
-lasso_reg = LassoCV(cv=5, random_state=0).fit(x_train, y_train)
+lasso_reg = LassoCV(alphas=alphas, cv=10).fit(x_train, y_train)
 lasso_coef = lasso_reg.coef_[0]
 lasso_intercept = lasso_reg.intercept_
 lasso_y = lasso_coef * x + lasso_intercept
-lasso_RSS = calculate_ResidualSquareSum(x_test, y_test, a=lasso_coef, b=-1, c=lasso_intercept)
-print(f"Lasso regression RSS: {lasso_RSS}")
+# lasso_RSS = calculate_ResidualSquareSum(x_test, y_test, a=lasso_coef, b=-1, c=lasso_intercept)
+# print(f"Lasso regression RSS: {lasso_RSS}")
+# print(f"lasso regression score: {lasso_reg.score(x_test, y_test)}")
 
 # ElasticNetCV from sklearn (L1+L2)
-elastic_reg = ElasticNetCV(cv=5, random_state=0).fit(x_train, y_train)
+elastic_reg = ElasticNetCV(alphas=alphas, cv=10, l1_ratio=0.9).fit(x_train, y_train)
 elastic_coef = elastic_reg.coef_[0]
 elastic_intercept = elastic_reg.intercept_
 elastic_y = elastic_coef * x + elastic_intercept
-elastic_RSS = calculate_ResidualSquareSum(x_test, y_test, a=elastic_coef, b=-1, c=elastic_intercept)
-print(f"Lasso regression RSS: {elastic_RSS}")
+# elastic_RSS = calculate_ResidualSquareSum(x_test, y_test, a=elastic_coef, b=-1, c=elastic_intercept)
+# print(f"ElasticNet regression RSS: {elastic_RSS}")
+# print(f"ElasticNet regression score: {elastic_reg.score(x_test, y_test)}")
 
 
-# plot the results
+# # ------------------------------------------------------------------------------------------------------
+# # PLOTTING
+
 plt.plot(x_train, y_train, 'ro', label='train data')
-plt.plot(x_test, y_test, 'mx', label='test data')
+plt.plot(x_test, y_test, 'bo', label='test data')
 plt.plot(x, linear_y, 'r', label='linear regression')
-plt.plot(x, ridge_y, 'b', label=f'ridge regression, alpha={ridge_reg.alpha_}')
-plt.plot(x, lasso_y, 'g', label=f'lasso regression, alpha={lasso_reg.alpha_:.2f}')
+plt.plot(x, ridge_y, 'b', label=f'ridge regression, alpha={ridge_reg.alpha_:.2f}')
+plt.plot(x, lasso_y, 'm', label=f'lasso regression, alpha={lasso_reg.alpha_:.2f}')
 plt.plot(x, elastic_y, 'c', label=f'elastic regression, alpha={elastic_reg.alpha_:.2f}')
 plt.xlabel('x')
 plt.ylabel('y')
+plt.title(f"linear score: {linear_reg.score(x_test, y_test):.4f}, "
+          f"ridge score: {ridge_reg.score(x_test, y_test):.4f}, "
+          f"lasso score: {lasso_reg.score(x_test, y_test):.4f}, "
+          f"elastic score: {elastic_reg.score(x_test, y_test):.4f}")
 plt.legend()
 plt.show()
 
@@ -154,3 +208,8 @@ plt.show()
 # plt.plot(x, y, 'm.')
 # plt.plot(x, (a_0 * x + c_0)/-b_0, 'b', label='base line')
 # plt.plot(x, (a_1 * x + c_1)/-b_1, 'bx')
+
+# np.save('data/M2_HO/x.npy', df['x'][df['cluster'] == 0])  # do it only once!
+# np.save('data/M2_HO/y.npy', df['y'][df['cluster'] == 0])  # do it only once!
+# np.save('data/M2_HO/x.npy', df['x'][(df['cluster'] == 0) | (df['cluster'] == 6)])  # do it only once!
+# np.save('data/M2_HO/y.npy', df['y'][(df['cluster'] == 0) | (df['cluster'] == 6)])  # do it only once!
