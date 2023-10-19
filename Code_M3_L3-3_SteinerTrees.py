@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-import itertools
-import pandas as pd
+
 
 # # Another example
 # A = [[0, 3, 0, 5, 2, 0],
