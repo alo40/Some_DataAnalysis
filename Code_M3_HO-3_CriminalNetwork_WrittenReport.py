@@ -17,34 +17,45 @@ for i in range(1, 12):
   G[i] = nx.from_pandas_adjacency(phases[i])
   G[i].name = var_name
 
-fig, ax = plt.subplots(1, 1, figsize=(15, 5))
+fig, axs = plt.subplots(1, 3, figsize=(15, 5))
 
-phase = 6
-metric = 'degree'  # 'eigenvector', 'betweenness', 'degree'
-match metric:
-    case 'eigenvector': metric_centrality = nx.eigenvector_centrality(G[phase])
-    case 'betweenness': metric_centrality = nx.betweenness_centrality(G[phase])
-    case 'degree'     : metric_centrality = nx.degree_centrality(G[phase])
+phase = 9
+axis = 0  # for subplots
+# metric = 'degree'  # 'eigenvector', 'betweenness', 'degree'
 
-# normalization
-min_eigen = min(metric_centrality.values())
-max_eigen = max(metric_centrality.values())
-normalized_eigenvector_centrality = {
-    node: (eigen - min_eigen) / (max_eigen - min_eigen)
-    for node, eigen in metric_centrality.items()
-}
+pos = nx.spring_layout(G[phase])
+for metric in ['eigenvector', 'betweenness', 'degree']:
+    match metric:
+        case 'eigenvector':
+            metric_centrality = nx.eigenvector_centrality(G[phase])
+            color = 'cool'  # 'spring'
+        case 'betweenness':
+            metric_centrality = nx.betweenness_centrality(G[phase])
+            color = 'cool'  #'autumn'
+        case 'degree':
+            metric_centrality = nx.degree_centrality(G[phase])
+            color = 'cool'  #'summer'
 
-# plotting with colormap
-colormap = plt.cm.get_cmap('cool')
-node_colors = [colormap(value) for value in normalized_eigenvector_centrality.values()]
-pos = nx.spring_layout(G[phase])  # Adjust layout algorithm as needed
-nx.draw(G[phase], pos, node_color=node_colors, with_labels=True, ax=ax)
+    # normalization
+    min_eigen = min(metric_centrality.values())
+    max_eigen = max(metric_centrality.values())
+    normalized_metric_centrality = {
+        node: (eigen - min_eigen) / (max_eigen - min_eigen)
+        for node, eigen in metric_centrality.items()
+    }
 
-# adding colorbar
-sm = plt.cm.ScalarMappable(cmap=colormap, norm=Normalize(vmin=0, vmax=1))
-sm.set_array([])  # This line is necessary
-# cbar = plt.colorbar(sm, orientation='vertical', label='Eigenvector Centrality', cax=plt.gcf().add_axes([0.85, 0.15, 0.03, 0.5]))
-cbar = plt.colorbar(sm, orientation='vertical', label=f"normalized {metric} centrality")
+    # plotting with colormap
+    colormap = plt.cm.get_cmap(color)
+    node_colors = [colormap(value) for value in normalized_metric_centrality.values()]
+    # pos = nx.spring_layout(G[phase])  # Adjust layout algorithm as needed
+    nx.draw(G[phase], pos, node_color=node_colors, with_labels=True, ax=axs[axis])
 
-plt.title(f"{metric} centrality, phase {phase}")  # not working
+    # adding colorbar
+    sm = plt.cm.ScalarMappable(cmap=colormap, norm=Normalize(vmin=0, vmax=1))
+    sm.set_array([])  # This line is necessary
+    cbar = plt.colorbar(sm, orientation='horizontal', label=f"normalized {metric} centrality", ax=axs[axis])
+
+    axs[axis].set_title(f"{metric} centrality")
+    axis += 1
+fig.suptitle(f"Criminal network phase {phase}", fontsize=16)
 plt.show()
